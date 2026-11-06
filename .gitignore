@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+*.local
+.dev.vars
+.wrangler
+worker-configuration.d.ts
+.DS_Store
+.vscode

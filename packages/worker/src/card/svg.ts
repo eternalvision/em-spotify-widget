@@ -49,7 +49,7 @@ const statusBlock = (frame: Frame, y: number): Block | null => {
       ? `<circle cx="${left + 4}" cy="${y + 10}" r="3" fill="none" stroke="${palette.dim}" stroke-width="2"/>`
       : `<circle class="dot" cx="${left + 4}" cy="${y + 10}" r="4" fill="${palette.accent}"/>`;
   const label = showLabel
-    ? `${dot}<text x="${left + 18}" y="${y + 15}" font-size="13" font-weight="600" fill="${palette.muted}">${escapeXml(fitText(text, width - 48, 13))}</text>`
+    ? `${dot}<text x="${left + 18}" y="${y + 15}" font-size="13" font-weight="600" fill="${palette.muted}">${escapeXml(fitText(text, width - 48, 13, 600))}</text>`
     : '';
   const mark = showLogo ? logo(palette, left + width - 18, y + 1) : '';
   return { markup: `${label}${mark}`, height: 28 };
@@ -67,7 +67,7 @@ const lineBlock = (
   const lineHeight = size * (weight > 600 ? 1.15 : 1.3);
   const baseline = y + (lineHeight + size * 0.72) / 2 - size * 0.08;
   return {
-    markup: `<text x="${frame.left}" y="${baseline.toFixed(1)}" font-size="${size}" font-weight="${weight}" letter-spacing="${spacing}" fill="${color}">${escapeXml(fitText(text, frame.width, size))}</text>`,
+    markup: `<text x="${frame.left}" y="${baseline.toFixed(1)}" font-size="${size}" font-weight="${weight}" letter-spacing="${spacing}" fill="${color}">${escapeXml(fitText(text, frame.width, size, weight))}</text>`,
     height: Math.round(lineHeight) + 4,
   };
 };
@@ -193,7 +193,7 @@ export const idleCard = (options: CardOptions): string => {
   const palette = resolvePalette(options, null);
   const { width, padding } = options;
   const mark = shows(options, 'logo') ? logo(palette, width - padding - 18, padding + 1) : '';
-  const text = `<text x="${padding}" y="${padding + 16}" font-size="16" font-weight="600" fill="${palette.muted}">${escapeXml(fitText(texts[options.lang].idle, width - padding * 2 - 28, 16))}</text>`;
+  const text = `<text x="${padding}" y="${padding + 16}" font-size="16" font-weight="600" fill="${palette.muted}">${escapeXml(fitText(texts[options.lang].idle, width - padding * 2 - 28, 16, 600))}</text>`;
   const frame = { options, palette } as Frame;
   return wrap(frame, width, padding * 2 + 24, `${text}${mark}`);
 };

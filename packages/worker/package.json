@@ -1,0 +1,23 @@
+{
+  "name": "@em-spotify/worker",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "imports": {
+    "#worker/*": "./src/*"
+  },
+  "scripts": {
+    "dev": "wrangler dev --port 8790 --var MOCK:true",
+    "dev:live": "wrangler dev --port 8790",
+    "types": "wrangler types --strict-vars=false --env-file .dev.vars.example",
+    "typecheck": "npm run types && tsc && tsc -p scripts",
+    "token": "node scripts/get-refresh-token.ts"
+  },
+  "dependencies": {
+    "@em-spotify/shared": "*",
+    "jpeg-js": "^0.4.4"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

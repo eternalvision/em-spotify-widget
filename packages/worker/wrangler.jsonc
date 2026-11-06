@@ -1,0 +1,14 @@
+{
+  "name": "spotify-widget",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-06",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "../widget/dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/embed", "/card.svg"],
+  },
+  "kv_namespaces": [{ "binding": "TOKENS" }],
+  "vars": { "MOCK": "false" },
+  "observability": { "enabled": true, "traces": { "enabled": true } },
+}

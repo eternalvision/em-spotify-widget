@@ -16,6 +16,7 @@ const shown =
 
 export const Panel = styled.div`
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: ${themed('gap')}px;
   box-sizing: border-box;
   width: 100%;
@@ -64,6 +65,7 @@ export const Mark = styled.span<{ $hidden?: boolean }>`
 
 export const Rows = styled.div`
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2px;
 `;
 

@@ -8,7 +8,8 @@
     "binding": "ASSETS",
     "run_worker_first": ["/api/*", "/embed", "/card.svg"],
   },
-  "kv_namespaces": [{ "binding": "TOKENS" }],
+  "kv_namespaces": [{ "binding": "TOKENS", "id": "7f1b1c599e2d40ae912b7f72aa3158a8" }],
+  "routes": [{ "pattern": "spotify-widget.eternalvision.cc", "custom_domain": true }],
   "vars": { "MOCK": "false" },
   "observability": { "enabled": true, "traces": { "enabled": true } },
 }

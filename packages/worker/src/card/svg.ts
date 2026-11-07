@@ -10,6 +10,9 @@ import { escapeXml, fitText } from '#worker/card/xml.ts';
 const gap = 2;
 const waveHeight = 40;
 const timeSlot = 34;
+const digitWidth = 7;
+const colonWidth = 3.5;
+const timeLine = 15;
 const unplayedOpacity = 0.28;
 const systemFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 
@@ -77,7 +80,7 @@ const waveBlock = (frame: Frame, top: number, offset: number): Block => {
   const { options, palette, track, state, left, width } = frame;
   const barWidth = (width - gap * (equalizerBars - 1)) / equalizerBars;
   const fraction = track.progressMs / track.durationMs;
-  const showProgress = shows(options, 'progress');
+  const showProgress = shows(options, 'wave-progress');
   const bars = barTimings(track.id, equalizerBars)
     .map((timing, index) => {
       const x = left + index * (barWidth + gap);
@@ -104,6 +107,33 @@ const waveBlock = (frame: Frame, top: number, offset: number): Block => {
   return { markup: bars, height: offset + waveHeight + 4 };
 };
 
+const rolling = (x: number, top: number, digits: number, period: number, phase: number): string => {
+  const strip = Array.from(
+    { length: digits },
+    (_, index) =>
+      `<text x="${digitWidth / 2}" y="${index * timeLine + 12}" text-anchor="middle">${index}</text>`,
+  ).join('');
+  return `<svg x="${x.toFixed(2)}" y="${top}" width="${digitWidth}" height="${timeLine}" overflow="hidden"><g style="--end:${-digits * timeLine}px;animation:roll ${period}s steps(${digits}) -${phase.toFixed(2)}s infinite">${strip}</g></svg>`;
+};
+
+const ticker = (left: number, top: number, track: Track, attributes: string): string => {
+  const seconds = track.progressMs / 1000;
+  const long = track.durationMs >= 600_000;
+  let x = left;
+  let markup = '';
+  if (long) {
+    markup += rolling(x, top, 6, 6000, seconds % 6000);
+    x += digitWidth;
+  }
+  markup += rolling(x, top, 10, 600, seconds % 600);
+  x += digitWidth;
+  markup += `<text x="${x.toFixed(2)}" y="${top + 12}">:</text>`;
+  x += colonWidth;
+  markup += rolling(x, top, 6, 60, seconds % 60);
+  markup += rolling(x + digitWidth, top, 10, 10, seconds % 10);
+  return `<g class="tk" ${attributes}>${markup}</g>`;
+};
+
 const timesBlock = (frame: Frame, top: number, offset: number): Block => {
   const y = top + offset;
   const { palette, track, state, left, width } = frame;
@@ -117,8 +147,12 @@ const timesBlock = (frame: Frame, top: number, offset: number): Block => {
     state === 'playing'
       ? ` style="animation:grow ${remaining.toFixed(1)}s linear forwards;--from:${from.toFixed(2)}px;--to:${barWidth.toFixed(2)}px"`
       : '';
+  const elapsed =
+    state === 'playing'
+      ? `${ticker(left, y, track, text)}<text class="ts" x="${left}" y="${y + 12}" ${text}>${formatTime(track.progressMs)}</text>`
+      : `<text x="${left}" y="${y + 12}" ${text}>${formatTime(track.progressMs)}</text>`;
   return {
-    markup: `<text x="${left}" y="${y + 12}" ${text}>${formatTime(track.progressMs)}</text><rect x="${barX}" y="${y + 6}" width="${barWidth.toFixed(2)}" height="4" rx="2" fill="${palette.track}"/><rect x="${barX}" y="${y + 6}" width="${from.toFixed(2)}" height="4" rx="2" fill="${palette.progress}"${motion}/><text x="${left + width}" y="${y + 12}" text-anchor="end" ${text}>${formatTime(track.durationMs)}</text>`,
+    markup: `${elapsed}<rect x="${barX}" y="${y + 6}" width="${barWidth.toFixed(2)}" height="4" rx="2" fill="${palette.track}"/><rect x="${barX}" y="${y + 6}" width="${from.toFixed(2)}" height="4" rx="2" fill="${palette.progress}"${motion}/><text x="${left + width}" y="${y + 12}" text-anchor="end" ${text}>${formatTime(track.durationMs)}</text>`,
     height: offset + 15,
   };
 };
@@ -137,7 +171,7 @@ const stack = (blocks: readonly Builder[], start: number) => {
 };
 
 const styleOf = (options: CardOptions, palette: Palette): string =>
-  `svg{--p:${palette.progress}}text{font-family:${options.font ?? systemFont}}@keyframes eq{from{transform:scaleY(var(--lo))}to{transform:scaleY(var(--hi))}}@keyframes lit{to{fill-opacity:1;fill:var(--p)}}@keyframes grow{from{width:var(--from)}to{width:var(--to)}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}.bar{transform-box:fill-box;transform-origin:center;animation:eq var(--d) ease-in-out var(--delay) infinite alternate}.bar.unlit{animation:eq var(--d) ease-in-out var(--delay) infinite alternate,lit .01s linear var(--ld) forwards}.still{transform-box:fill-box;transform-origin:center}.dot{animation:pulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion:reduce){.bar,.dot,.bar.unlit{animation:none}}`;
+  `svg{--p:${palette.progress}}text{font-family:${options.font ?? systemFont}}@keyframes eq{from{transform:scaleY(var(--lo))}to{transform:scaleY(var(--hi))}}@keyframes lit{to{fill-opacity:1;fill:var(--p)}}@keyframes grow{from{width:var(--from)}to{width:var(--to)}}@keyframes roll{to{transform:translateY(var(--end))}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}.bar{transform-box:fill-box;transform-origin:center;animation:eq var(--d) ease-in-out var(--delay) infinite alternate}.bar.unlit{animation:eq var(--d) ease-in-out var(--delay) infinite alternate,lit .01s linear var(--ld) forwards}.still{transform-box:fill-box;transform-origin:center}.ts{display:none}.dot{animation:pulse 1.8s ease-in-out infinite}@media (prefers-reduced-motion:reduce){.bar,.dot,.bar.unlit{animation:none}.ts{display:inline}.tk{display:none}}`;
 
 const backdrop = (frame: Frame, width: number, height: number): string => {
   const { options, palette, cover } = frame;

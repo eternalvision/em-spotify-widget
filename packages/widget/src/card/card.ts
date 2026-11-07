@@ -70,7 +70,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
 
   const paintBars = (position: number, track: Track): void => {
     const fraction = position / track.durationMs;
-    const showProgress = !options.peek().hide.includes('progress');
+    const showProgress = !options.peek().hide.includes('wave-progress');
     const colors = common.palette.peek();
     bars.forEach((bar, index) => {
       const played = showProgress && (index + 0.5) / equalizerBars <= fraction;

@@ -8,6 +8,7 @@ export const hideableParts = [
   'artist',
   'album',
   'progress',
+  'wave-progress',
   'equalizer',
   'logo',
   'label',

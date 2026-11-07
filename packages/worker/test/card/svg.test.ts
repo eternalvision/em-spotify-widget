@@ -29,6 +29,15 @@ describe('renderCard', () => {
     expect(svg).toContain('Paused on');
   });
 
+  it('ticks the elapsed time by itself while playing', async () => {
+    const svg = await renderCard(defaultOptions, playing);
+    expect(svg).toContain('animation:roll 10s steps(10) -0.00s infinite');
+    expect(svg).toContain('animation:roll 60s steps(6) -0.00s infinite');
+    expect(svg).toContain('animation:roll 600s steps(10) -60.00s infinite');
+    const paused = await renderCard(defaultOptions, { ...playing, state: 'paused' });
+    expect(paused).not.toContain('animation:roll');
+  });
+
   it('escapes text from Spotify', async () => {
     const track = { ...playing.track!, title: '<b>&"x"' };
     const svg = await renderCard(defaultOptions, { ...playing, track });
@@ -76,9 +85,15 @@ describe('card effects', () => {
     expect(svg).toMatch(/--ld:[1-9]\d*\.\d\ds/);
   });
 
-  it('keeps every bar lit and drops the listening bar without progress', async () => {
-    const svg = await renderCard({ ...defaultOptions, hide: ['progress'] }, playing);
+  it('keeps every bar lit without the wave progress', async () => {
+    const svg = await renderCard({ ...defaultOptions, hide: ['wave-progress'] }, playing);
     expect(svg).not.toContain('bar unlit');
+    expect(svg).toContain('animation:grow');
+  });
+
+  it('drops the listening bar but keeps the wave progress without progress', async () => {
+    const svg = await renderCard({ ...defaultOptions, hide: ['progress'] }, playing);
+    expect(svg).toContain('bar unlit');
     expect(svg).not.toContain('animation:grow');
   });
 

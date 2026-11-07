@@ -124,12 +124,21 @@ describe('<spotify-widget>', () => {
     expect(bars[39]?.style.opacity).toBe('0.28');
   });
 
-  it('keeps every bar lit when the progress is hidden', async () => {
+  it('keeps every bar lit when the wave progress is hidden', async () => {
+    stubApi({ state: 'playing', fetchedAt: 1, track });
+    const element = await make({ hide: 'wave-progress' });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const bars = deepAll(element.shadowRoot ?? element, '[data-part="bar"]');
+    expect(bars.every((bar) => bar.style.opacity === '1')).toBe(true);
+    expect(shows(element, 'progress')).toBe(true);
+  });
+
+  it('keeps the wave progress when only the listening bar is hidden', async () => {
     stubApi({ state: 'playing', fetchedAt: 1, track });
     const element = await make({ hide: 'progress' });
     await new Promise((resolve) => setTimeout(resolve, 50));
     const bars = deepAll(element.shadowRoot ?? element, '[data-part="bar"]');
-    expect(bars.every((bar) => bar.style.opacity === '1')).toBe(true);
+    expect(bars.some((bar) => bar.style.opacity !== '1')).toBe(true);
     expect(shows(element, 'progress')).toBe(false);
   });
 });

@@ -40,7 +40,17 @@ const attributesOf: Record<WidgetName, readonly AttributeName[]> = {
 };
 
 const partsOf: Record<WidgetName, readonly HideablePart[]> = {
-  'now-playing': ['cover', 'title', 'artist', 'album', 'progress', 'equalizer', 'logo', 'label'],
+  'now-playing': [
+    'cover',
+    'title',
+    'artist',
+    'album',
+    'progress',
+    'wave-progress',
+    'equalizer',
+    'logo',
+    'label',
+  ],
   vinyl: ['cover', 'title', 'artist', 'logo', 'label'],
   pill: ['cover', 'title', 'artist', 'equalizer', 'logo'],
   recent: ['heading', 'cover', 'artist', 'meta', 'logo'],

@@ -133,7 +133,7 @@ The same names work as attributes of the elements and as query parameters of `/e
 | `range`        | `short` (4 weeks), `medium` (6 months), `long` (all time)                                   | `medium`   | top lists         |
 | `count`        | number of rows, 1 to 20                                                                     | `5`        | list widgets      |
 
-Parts for `hide`: card `cover`, `title`, `artist`, `album`, `progress`, `equalizer`, `logo`, `label`; vinyl `cover`, `title`, `artist`, `logo`, `label`; pill `cover`, `title`, `artist`, `equalizer`, `logo`; lists `heading`, `cover`, `artist`, `meta`, `logo`; profile `cover`, `artist`, `logo`.
+Parts for `hide`: card `cover`, `title`, `artist`, `album`, `progress` (the listening bar and the times), `wave-progress` (the lit part of the waveform), `equalizer`, `logo`, `label`; vinyl `cover`, `title`, `artist`, `logo`, `label`; pill `cover`, `title`, `artist`, `equalizer`, `logo`; lists `heading`, `cover`, `artist`, `meta`, `logo`; profile `cover`, `artist`, `logo`.
 
 Explicit colors win over the cover colors, which win over the theme. On the elements the page can also override the look with CSS custom properties: `--widget-bg`, `--widget-text`, `--widget-accent`, `--widget-bars`, `--widget-progress`, `--widget-radius`, `--widget-font`.
 
@@ -141,7 +141,7 @@ Parts carry a `data-part` attribute (`card`, `cover`, `title`, `artist`, `album`
 
 ## Notes
 
-- **Waveform.** The bars are also the progress: the part that has played is lit, and the listening bar with the two times sits under it (`progress` hides them and lights every bar). Every bar swings in its own endless cycle, the same in the script, the iframe and the image. Spotify has closed its audio analysis endpoints to new apps, so the bars do not follow the real sound: they depend only on the track and freeze on pause.
+- **Waveform.** The bars are also the progress: the part that has played is lit, and the listening bar with the two times sits under it (`progress` hides the listening bar and the times, `wave-progress` lights every bar; the two are independent). Every bar swings in its own endless cycle, the same in the script, the iframe and the image. Spotify has closed its audio analysis endpoints to new apps, so the bars do not follow the real sound: they depend only on the track and freeze on pause.
 - **Cover colors in the image.** The Worker decodes the small JPEG cover of the track (with `jpeg-js`, which needs the `nodejs_compat` flag set in `wrangler.jsonc`) and takes the same accent as the widget does.
 - **Not playing.** When nothing plays the cards show only the "Not playing" text and the logo.
 - **Iframe on dark pages.** A page that sets `color-scheme: dark` makes browsers paint an opaque background behind a transparent iframe. Use the script embed there.

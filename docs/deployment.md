@@ -53,7 +53,7 @@ npx wrangler kv namespace create TOKENS
 "kv_namespaces": [{ "binding": "TOKENS", "id": "<the id wrangler printed>" }]
 ```
 
-Store the two secrets (wrangler asks for the value, so it never lands in your shell history):
+Store the two secrets. The word after `put` is the **name** of the secret, exactly as written below; wrangler then asks for the value, so it never lands in your shell history (do not type the value after `put`, that creates a secret with the wrong name):
 
 ```bash
 cd packages/worker
@@ -61,7 +61,7 @@ npx wrangler secret put SPOTIFY_CLIENT_ID
 npx wrangler secret put SPOTIFY_REFRESH_TOKEN
 ```
 
-The values are the ones in `.dev.vars`.
+The values are the ones in `.dev.vars`: the Client ID and the refresh token. `npx wrangler secret list` shows the names that are set; it must show exactly `SPOTIFY_CLIENT_ID` and `SPOTIFY_REFRESH_TOKEN`. A wrongly named secret is removed with `npx wrangler secret delete <name>`.
 
 ## 5. Your domain
 

@@ -51,7 +51,9 @@ Each widget is a custom element made with `defineWidget`. Its attributes arrive 
 ### The now playing card
 
 - The waveform is 40 bars. Each bar has its own endless CSS animation (`@keyframes` with custom properties set per track from `barTimings`), so the cycle is the same whether it is drawn by the widget or by the SVG.
-- The bars are also the progress. A frame loop lights the played ones and updates the listening bar and the times between polls; the next poll only corrects the position.
+- The bars are also the progress. A frame loop lights the played ones and updates the listening bar and the times between polls; the next poll only corrects the position. `wave-progress` and `progress` are separate parts of `hide`: the first lights every bar, the second removes the listening bar and the times.
+- Three layouts: `vertical`, `horizontal` and `square`. In the square one the cover is absolute and fills the card, a `Scrim` layer fades the card background over its top and bottom, the status row is pinned to the top and the text sits at the bottom. It applies only while a track is known, so the idle card stays compact. `cover-blur` and `cover-bleed` do not apply to it.
+- Track change (`lib/swap.ts`): when the track id changes, the text rows rise in one after another (Web Animations API, skipped with `prefers-reduced-motion`), the backdrop fades in, and a ghost copy of the previous cover is laid over the new one and fades out, which is a cross-fade.
 - `cover-colors` reads the cover on a canvas (`lib/cover-color.ts`) and takes an accent with the shared `accentOfPixels`. The Worker uses the same function on the decoded JPEG for the image.
 - `cover-blur` and `cover-bleed` are plain styled-component states: a blurred backdrop layer and a zero-padding card with the spacing moved to the body.
 
@@ -62,6 +64,9 @@ Each widget is a custom element made with `defineWidget`. Its attributes arrive 
 - **Caching.** `cache.ts` caches parsed answers in the Cache API for a few seconds up to ten minutes, depending on the data. Cached now playing answers move the progress forward by the age of the cache.
 - **Mock mode.** With `MOCK=true` every endpoint returns generated data, so the whole stack runs without Spotify keys.
 - **The image.** `card/svg.ts` draws the card as SVG text, laid out to match the widget (the same line heights, spacing and gaps). The cover is inlined as a data URI because an SVG used as an image cannot load other files. Animations are CSS inside the SVG. For `cover-colors` the Worker decodes the small cover with `jpeg-js`.
+- **Elapsed time in the image.** An image cannot run script, so the elapsed time is drawn as digit strips (`rolling` in `svg.ts`): a nested `<svg>` clips one digit and a `steps()` animation with a negative delay moves the strip to the right digit and on every second, ten seconds and minute. A plain text copy is shown under `prefers-reduced-motion`.
+- **Text width.** `fitText` in `card/xml.ts` measures a title with a table of glyph widths (Arial metrics, a little wider for bold) instead of one average width.
+- **Square layout.** `squareCard` places the cover over the whole card with a gradient, pins the status row to the top and stacks the text from the bottom; its height is the width unless the text needs more.
 
 ## The configurator
 

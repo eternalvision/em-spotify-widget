@@ -110,4 +110,4 @@ The same types, with parsers that check a body before using it, live in `package
 
 ## `/card.svg`
 
-Draws the now playing card. It takes the options of the card (`theme`, `layout`, `lang`, colors, `font`, `radius`, `width`, `padding`, `gap`, `hide`, `cover-colors`, `cover-blur`, `cover-bleed`); see the options table in the [README](../README.md). It does not poll, so an `<img>` shows the moment it was loaded, with the bars and the listening bar moving by themselves.
+Draws the now playing card. It takes the options of the card (`theme`, `layout` as `vertical`, `horizontal` or `square`, `lang`, colors, `font`, `radius`, `width`, `padding`, `gap`, `hide` including `wave-progress`, `cover-colors`, `cover-blur`, `cover-bleed`); see the options table in the [README](../README.md). It does not poll, so an `<img>` shows the moment it was loaded, with the bars, the listening bar and the elapsed time moving by themselves. A gallery of options is in the [README](../README.md#demo).

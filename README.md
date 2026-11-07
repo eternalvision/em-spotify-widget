@@ -4,6 +4,8 @@ Spotify widgets that can be embedded on any site, built on [ECMact](https://gith
 
 Every widget can be embedded with a script and a custom element (Shadow DOM, themed through attributes and CSS variables) or with an `<iframe>` pointing at `/embed`. The now playing card also has a server-rendered image, `/card.svg`, that works in a README. The three variants look and move the same way and take the same options.
 
+A live instance runs at https://spotify-widget.eternalvision.cc (the root page is the configurator).
+
 The root page of the deployed Worker is a configurator: pick a widget, tune it, see the script, iframe and image side by side and copy the code. The configurator is built with ECMact too, with custom controls and no native form elements.
 
 ## Built on ECMact
@@ -36,6 +38,53 @@ The Worker serves the bundled `widget.js` (ECMact included, about 19 KB gzipped 
 | Up next          | `<spotify-queue>`       | The queue after the current track.                       |
 | Playlists        | `<spotify-playlists>`   | Your public playlists with their size.                   |
 | Profile card     | `<spotify-profile>`     | Avatar, name and followers.                              |
+
+## Demo
+
+Every picture below is the live `/card.svg` of the deployed Worker with the options shown under it, so each one shows what is playing right now (or "Not playing" when nothing is). They are plain `<img>` tags, so they work in any README.
+
+<table>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg" width="260" alt="Default"><br><b>Default</b><br><sub><code>/card.svg</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?theme=light" width="260" alt="Light theme"><br><b>Light theme</b><br><sub><code>/card.svg?theme=light</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?theme=green" width="260" alt="Green theme"><br><b>Green theme</b><br><sub><code>/card.svg?theme=green</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?layout=horizontal" width="260" alt="Horizontal"><br><b>Horizontal</b><br><sub><code>/card.svg?layout=horizontal</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?layout=square" width="260" alt="Square"><br><b>Square</b><br><sub><code>/card.svg?layout=square</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?layout=square&amp;theme=light" width="260" alt="Square, light"><br><b>Square, light</b><br><sub><code>/card.svg?layout=square&amp;theme=light</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?layout=square&amp;cover-colors=true" width="260" alt="Square, colors from the cover"><br><b>Square, colors from the cover</b><br><sub><code>/card.svg?layout=square&amp;cover-colors=true</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?layout=square&amp;hide=album,equalizer" width="260" alt="Square, without album and equalizer"><br><b>Square, without album and equalizer</b><br><sub><code>/card.svg?layout=square&amp;hide=album,equalizer</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?cover-colors=true" width="260" alt="Colors from the cover"><br><b>Colors from the cover</b><br><sub><code>/card.svg?cover-colors=true</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?cover-blur=true" width="260" alt="Blurred cover behind"><br><b>Blurred cover behind</b><br><sub><code>/card.svg?cover-blur=true</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?cover-bleed=true" width="260" alt="Cover inside the card"><br><b>Cover inside the card</b><br><sub><code>/card.svg?cover-bleed=true</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?cover-bleed=true&amp;cover-blur=true&amp;cover-colors=true" width="260" alt="Inside, blurred, cover colors"><br><b>Inside, blurred, cover colors</b><br><sub><code>/card.svg?cover-bleed=true&amp;cover-blur=true&amp;cover-colors=true</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?layout=horizontal&amp;theme=light&amp;cover-colors=true" width="260" alt="Horizontal, light, cover colors"><br><b>Horizontal, light, cover colors</b><br><sub><code>/card.svg?layout=horizontal&amp;theme=light&amp;cover-colors=true</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?hide=progress" width="260" alt="Without the listening bar"><br><b>Without the listening bar</b><br><sub><code>/card.svg?hide=progress</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?hide=wave-progress" width="260" alt="Without the wave progress"><br><b>Without the wave progress</b><br><sub><code>/card.svg?hide=wave-progress</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?hide=album,progress,label,logo" width="260" alt="Minimal"><br><b>Minimal</b><br><sub><code>/card.svg?hide=album,progress,label,logo</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?hide=cover" width="260" alt="Without the cover"><br><b>Without the cover</b><br><sub><code>/card.svg?hide=cover</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?background=1b1b2f&amp;accent=ff4d6d&amp;bars=ff4d6d&amp;progress=ffd166" width="260" alt="Own colors"><br><b>Own colors</b><br><sub><code>/card.svg?background=1b1b2f&amp;accent=ff4d6d&amp;bars=ff4d6d&amp;progress=ffd166</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?radius=40" width="260" alt="Round corners"><br><b>Round corners</b><br><sub><code>/card.svg?radius=40</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?radius=0" width="260" alt="Sharp corners"><br><b>Sharp corners</b><br><sub><code>/card.svg?radius=0</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?font=Georgia%2C%20serif" width="260" alt="Own font"><br><b>Own font</b><br><sub><code>/card.svg?font=Georgia%2C%20serif</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?width=240" width="260" alt="Narrow"><br><b>Narrow</b><br><sub><code>/card.svg?width=240</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?lang=ru" width="260" alt="Russian"><br><b>Russian</b><br><sub><code>/card.svg?lang=ru</code></sub></td>
+    <td align="center" valign="top"><img src="https://spotify-widget.eternalvision.cc/card.svg?lang=cs" width="260" alt="Czech"><br><b>Czech</b><br><sub><code>/card.svg?lang=cs</code></sub></td>
+  </tr>
+</table>
 
 ## Packages
 
@@ -143,6 +192,8 @@ Parts carry a `data-part` attribute (`card`, `cover`, `title`, `artist`, `album`
 
 - **Waveform.** The bars are also the progress: the part that has played is lit, and the listening bar with the two times sits under it (`progress` hides the listening bar and the times, `wave-progress` lights every bar; the two are independent). Every bar swings in its own endless cycle, the same in the script, the iframe and the image. Spotify has closed its audio analysis endpoints to new apps, so the bars do not follow the real sound: they depend only on the track and freeze on pause.
 - **Cover colors in the image.** The Worker decodes the small JPEG cover of the track (with `jpeg-js`, which needs the `nodejs_compat` flag set in `wrangler.jsonc`) and takes the same accent as the widget does.
+- **Time in the image.** The elapsed time ticks by itself: each digit is a small strip that a CSS animation moves one step at the right moment, so no script is needed. After the end of the track the digits start a new round, and the image shows the moment it was loaded anyway.
+- **Text width in the image.** The image cuts long titles with an ellipsis using the real width of each glyph (`fitText`), so it cuts almost where the widget does.
 - **Track change.** When the track changes the cover cross-fades and the text rises into place (script and iframe). The image is a still picture of the moment it was loaded, so it cannot animate a change by itself. Nothing moves with `prefers-reduced-motion`.
 - **Not playing.** When nothing plays the cards show only the "Not playing" text and the logo.
 - **Iframe on dark pages.** A page that sets `color-scheme: dark` makes browsers paint an opaque background behind a transparent iframe. Use the script embed there.

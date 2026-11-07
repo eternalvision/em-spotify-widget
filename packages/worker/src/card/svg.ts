@@ -175,7 +175,7 @@ const styleOf = (options: CardOptions, palette: Palette): string =>
 
 const backdrop = (frame: Frame, width: number, height: number): string => {
   const { options, palette, cover } = frame;
-  if (!options.coverBlur || !cover) {
+  if (!options.coverBlur || !cover || options.layout === 'square') {
     return '';
   }
   return `<filter id="blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="22"/></filter><image href="${cover}" x="${-width * 0.25}" y="${-height * 0.25}" width="${width * 1.5}" height="${height * 1.5}" preserveAspectRatio="xMidYMid slice" filter="url(#blur)" opacity="0.6"/><rect width="${width}" height="${height}" fill="${palette.background}" opacity="0.45"/>`;
@@ -289,6 +289,24 @@ const horizontalCard = (frame: Frame): string => {
   return wrap(frame, options.width, height, `${image}${content.markup}`);
 };
 
+const squareScrim = (palette: Palette, width: number, height: number): string =>
+  `<linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${palette.background}" stop-opacity="0.55"/><stop offset="0.22" stop-color="${palette.background}" stop-opacity="0"/><stop offset="0.25" stop-color="${palette.background}" stop-opacity="0"/><stop offset="0.68" stop-color="${palette.background}" stop-opacity="0.78"/><stop offset="1" stop-color="${palette.background}" stop-opacity="0.95"/></linearGradient><rect width="${width}" height="${height}" fill="url(#scrim)"/>`;
+
+const squareCard = (frame: Frame): string => {
+  const { options, palette, cover } = frame;
+  const { padding, width } = options;
+  const lines = textBlocks(frame, { title: 24, artist: 15 }).slice(1);
+  const lower = stack(lines, 0).end;
+  const height = Math.max(width, lower + padding * 2);
+  const content = stack(lines, height - padding - lower);
+  const status = statusBlock(frame, padding);
+  const showCover = shows(options, 'cover') && cover !== null;
+  const image = showCover
+    ? `<image href="${cover}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>${squareScrim(palette, width, height)}`
+    : '';
+  return wrap(frame, width, height, `${image}${status?.markup ?? ''}${content.markup}`);
+};
+
 export const playingCard = (
   options: CardOptions,
   data: NowPlaying,
@@ -305,5 +323,12 @@ export const playingCard = (
     left: options.padding,
     width: options.width - options.padding * 2,
   };
-  return options.layout === 'horizontal' ? horizontalCard(frame) : verticalCard(frame);
+  switch (options.layout) {
+    case 'horizontal':
+      return horizontalCard(frame);
+    case 'square':
+      return squareCard(frame);
+    case 'vertical':
+      return verticalCard(frame);
+  }
 };

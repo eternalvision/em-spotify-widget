@@ -1,5 +1,5 @@
 export const themeNames = ['dark', 'light', 'green'] as const;
-export const layoutNames = ['vertical', 'horizontal'] as const;
+export const layoutNames = ['vertical', 'horizontal', 'square'] as const;
 export const languageNames = ['en', 'ru', 'uk', 'cs'] as const;
 export const rangeNames = ['short', 'medium', 'long'] as const;
 export const hideableParts = [

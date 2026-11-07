@@ -124,7 +124,7 @@ The same names work as attributes of the elements and as query parameters of `/e
 | `refresh`      | seconds between updates, 3 to 300                                                           | `10`       | all               |
 | `link`         | `false` turns off links to Spotify                                                          | `true`     | all               |
 | `hide`         | comma list of parts to hide, see below                                                      | none       | all               |
-| `layout`       | `vertical`, `horizontal`                                                                    | `vertical` | card              |
+| `layout`       | `vertical`, `horizontal`, `square` (the cover fills the card, the text lies over it)        | `vertical` | card              |
 | `bars`         | hex color of the waveform that has not played yet                                           | accent     | card, pill        |
 | `progress`     | hex color of the part that has played, and of the listening bar                             | accent     | card              |
 | `cover-colors` | `true` takes accent, waveform and progress colors from the cover                            | `false`    | card, vinyl, pill |
@@ -143,6 +143,7 @@ Parts carry a `data-part` attribute (`card`, `cover`, `title`, `artist`, `album`
 
 - **Waveform.** The bars are also the progress: the part that has played is lit, and the listening bar with the two times sits under it (`progress` hides the listening bar and the times, `wave-progress` lights every bar; the two are independent). Every bar swings in its own endless cycle, the same in the script, the iframe and the image. Spotify has closed its audio analysis endpoints to new apps, so the bars do not follow the real sound: they depend only on the track and freeze on pause.
 - **Cover colors in the image.** The Worker decodes the small JPEG cover of the track (with `jpeg-js`, which needs the `nodejs_compat` flag set in `wrangler.jsonc`) and takes the same accent as the widget does.
+- **Track change.** When the track changes the cover cross-fades and the text rises into place (script and iframe). The image is a still picture of the moment it was loaded, so it cannot animate a change by itself. Nothing moves with `prefers-reduced-motion`.
 - **Not playing.** When nothing plays the cards show only the "Not playing" text and the logo.
 - **Iframe on dark pages.** A page that sets `color-scheme: dark` makes browsers paint an opaque background behind a transparent iframe. Use the script embed there.
 - **Updates.** The Worker caches Spotify answers for a few seconds (now playing, queue), half a minute (recently played) or ten minutes (top lists, playlists, profile).

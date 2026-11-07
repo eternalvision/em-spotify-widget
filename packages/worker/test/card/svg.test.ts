@@ -29,6 +29,14 @@ describe('renderCard', () => {
     expect(svg).toContain('Paused on');
   });
 
+  it('draws the square layout with the cover under the text', async () => {
+    const svg = await renderCard({ ...defaultOptions, layout: 'square', coverBlur: true }, playing);
+    expect(svg).toContain('id="scrim"');
+    expect(svg).not.toContain('id="blur"');
+    expect(svg).toMatch(/width="320" height="320"/);
+    expect(svg).toContain('Neon Skyline');
+  });
+
   it('ticks the elapsed time by itself while playing', async () => {
     const svg = await renderCard(defaultOptions, playing);
     expect(svg).toContain('animation:roll 10s steps(10) -0.00s infinite');

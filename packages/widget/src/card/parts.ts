@@ -23,12 +23,19 @@ const pulsing = css`
   animation: ${pulse} 1.8s ease-in-out infinite;
 `;
 
-export const Card = styled.a<{ $horizontal?: boolean; $linked?: boolean; $bleed?: boolean }>`
+export const Card = styled.a<{
+  $horizontal?: boolean;
+  $linked?: boolean;
+  $bleed?: boolean;
+  $square?: boolean;
+}>`
   position: relative;
   display: flex;
   flex-direction: ${(props) => (props.$horizontal ? 'row' : 'column')};
-  align-items: ${(props) => (props.$horizontal ? 'stretch' : 'stretch')};
-  gap: ${(props) => (props.$bleed ? '0' : `${themed('gap')(props)}px`)};
+  align-items: stretch;
+  justify-content: ${(props) => (props.$square ? 'flex-end' : 'flex-start')};
+  ${(props) => (props.$square ? 'aspect-ratio: 1;' : '')}
+  gap: ${(props) => (props.$bleed || props.$square ? '0' : `${themed('gap')(props)}px`)};
   box-sizing: border-box;
   width: 100%;
   padding: ${(props) => (props.$bleed ? '0' : `${themed('padding')(props)}px`)};
@@ -70,20 +77,42 @@ export const Backdrop = styled.div<{ $image?: string }>`
   }
 `;
 
-export const Cover = styled.div<{ $hidden?: boolean; $horizontal?: boolean; $bleed?: boolean }>`
-  position: relative;
+const scrim = (props: Themed): string => {
+  const background = `var(--widget-bg, ${themed('background')(props)})`;
+  return `linear-gradient(to bottom, color-mix(in srgb, ${background} 55%, transparent) 0%, transparent 22%, transparent 25%, color-mix(in srgb, ${background} 78%, transparent) 68%, color-mix(in srgb, ${background} 95%, transparent) 100%)`;
+};
+
+export const Cover = styled.div<{
+  $hidden?: boolean;
+  $horizontal?: boolean;
+  $bleed?: boolean;
+  $square?: boolean;
+}>`
+  position: ${(props) => (props.$square ? 'absolute' : 'relative')};
+  ${(props) => (props.$square ? 'inset: 0; z-index: -1;' : '')}
   display: ${shown('block')};
   flex: none;
   width: ${(props) => (props.$horizontal ? 'clamp(72px, 30%, 240px)' : '100%')};
-  ${(props) => !(props.$horizontal && props.$bleed) && 'aspect-ratio: 1;'}
+  ${(props) => (!props.$square && !(props.$horizontal && props.$bleed) ? 'aspect-ratio: 1;' : '')}
   border-radius: ${(props) =>
-    props.$bleed ? '0' : `calc(var(--widget-radius, ${themed('radius')(props)}px) * 0.78)`};
+    props.$bleed || props.$square
+      ? '0'
+      : `calc(var(--widget-radius, ${themed('radius')(props)}px) * 0.78)`};
   box-shadow: ${(props) =>
-    props.$bleed
+    props.$bleed || props.$square
       ? 'none'
       : `0 18px 36px -20px color-mix(in srgb, var(--widget-accent, ${themed('accent')(props)}) 45%, transparent)`};
   overflow: hidden;
   background: ${themed('track')};
+`;
+
+export const Scrim = styled.div<{ $hidden?: boolean }>`
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: ${shown('block')};
+  background: ${scrim};
+  pointer-events: none;
 `;
 
 export const CoverImage = styled.img`
@@ -93,13 +122,14 @@ export const CoverImage = styled.img`
   object-fit: cover;
 `;
 
-export const Body = styled.div<{ $bleed?: boolean; $horizontal?: boolean }>`
-  position: relative;
+export const Body = styled.div<{ $bleed?: boolean; $horizontal?: boolean; $square?: boolean }>`
+  position: ${(props) => (props.$square ? 'static' : 'relative')};
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+  justify-content: ${(props) => (props.$square ? 'flex-end' : 'flex-start')};
   padding: ${(props) => {
     const padding = `${themed('padding')(props)}px`;
     const gap = `${themed('gap')(props)}px`;
@@ -112,12 +142,16 @@ export const Body = styled.div<{ $bleed?: boolean; $horizontal?: boolean }>`
   }};
 `;
 
-export const Status = styled.div<{ $hidden?: boolean; $idle?: boolean }>`
+export const Status = styled.div<{ $hidden?: boolean; $idle?: boolean; $square?: boolean }>`
   display: ${shown('flex')};
+  ${(props) =>
+    props.$square
+      ? `position: absolute; top: ${themed('padding')(props)}px; left: ${themed('padding')(props)}px; right: ${themed('padding')(props)}px; margin: 0;`
+      : ''}
   align-items: center;
   gap: 8px;
   min-height: 20px;
-  margin-bottom: 4px;
+  ${(props) => (props.$square ? '' : 'margin-bottom: 4px;')}
   font-size: ${(props) => (props.$idle ? '16px' : '13px')};
   font-weight: 600;
   color: ${themed('muted')};

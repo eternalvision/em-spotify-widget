@@ -70,6 +70,7 @@ export const hasImage = (widget: WidgetName): boolean => widget === 'now-playing
 
 interface FrameShape {
   horizontal: boolean;
+  square: boolean;
   bleed: boolean;
   count: number;
   width: number;
@@ -83,6 +84,9 @@ export const frameHeight = (widget: WidgetName, shape: FrameShape): number => {
     case 'now-playing':
       if (shape.horizontal) {
         return padding * 2 + 168;
+      }
+      if (shape.square) {
+        return Math.max(width, padding * 2 + 146);
       }
       return width + gap + 172 + (shape.bleed ? padding : 0);
     case 'vinyl':

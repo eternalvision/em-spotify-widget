@@ -36,6 +36,7 @@ export const scriptSnippet = (origin: string, widget: WidgetName, values: Values
 
 export const shapeOf = (values: Values) => ({
   horizontal: values.layout === 'horizontal',
+  square: values.layout === 'square',
   bleed: values['cover-bleed'] === 'true',
   count: Number(values.count ?? 5),
   width: Number(values.width ?? 320),

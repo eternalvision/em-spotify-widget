@@ -124,6 +124,17 @@ describe('<spotify-widget>', () => {
     expect(bars[39]?.style.opacity).toBe('0.28');
   });
 
+  it('lays the text over the cover in the square layout', async () => {
+    stubApi({ state: 'playing', fetchedAt: 1, track });
+    const square = await make({ layout: 'square' });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(part(square, 'card')?.getAttribute('data-layout')).toBe('square');
+    expect(shows(square, 'scrim')).toBe(true);
+    const vertical = await make();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(shows(vertical, 'scrim')).toBe(false);
+  });
+
   it('keeps every bar lit when the wave progress is hidden', async () => {
     stubApi({ state: 'playing', fetchedAt: 1, track });
     const element = await make({ hide: 'wave-progress' });

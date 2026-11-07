@@ -18,6 +18,7 @@ import {
   LabelText,
   Line,
   Logo,
+  Scrim,
   Status,
   Times,
   TimeText,
@@ -28,6 +29,7 @@ import { followCoverAccent } from '#widget/lib/now-playing.ts';
 import { createCommon } from '#widget/lib/common.ts';
 import { createPlayer, type Snapshot } from '#widget/lib/player.ts';
 import { startPolling } from '#widget/lib/poller.ts';
+import { createSwap } from '#widget/lib/swap.ts';
 import { endpointOf, type Props } from '#widget/lib/props.ts';
 
 const unplayedOpacity = '0.28';
@@ -46,8 +48,13 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
   const idle = computed(() => state.value === 'idle');
   const track = computed(() => snapshot.value?.data.track ?? null);
   const horizontal = computed(() => options.value.layout === 'horizontal');
+  const square = computed(() => options.value.layout === 'square' && track.value !== null);
   const bleed = computed(
-    () => options.value.coverBleed && !options.value.hide.includes('cover') && track.value !== null,
+    () =>
+      options.value.coverBleed &&
+      options.value.layout !== 'square' &&
+      !options.value.hide.includes('cover') &&
+      track.value !== null,
   );
   const href = computed(() => (options.value.link ? (track.value?.url ?? '') : ''));
   const elapsed = signal('0:00');
@@ -64,6 +71,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
   const labelTextHidden = computed(() => !idle.value && options.value.hide.includes('label'));
   const statusHidden = computed(() => labelTextHidden.value && options.value.hide.includes('logo'));
 
+  const swap = createSwap();
   const bars: HTMLElement[] = [];
   const lit: string[] = [];
   let fill: HTMLElement | undefined;
@@ -110,6 +118,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
     'data-bleed': computed(() => String(bleed.value)),
     $horizontal: horizontal,
     $bleed: bleed,
+    $square: square,
     $linked: computed(() => href.value !== ''),
     href,
     target: '_blank',
@@ -146,6 +155,14 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
           }
         });
       });
+      let previousId: string | undefined;
+      const stopSwap = effect(() => {
+        const id = track.value?.id;
+        if (previousId !== undefined && id !== undefined && id !== previousId) {
+          swap.run();
+        }
+        previousId = id;
+      });
       const stopCover = followCoverAccent(
         common.accent,
         options,
@@ -160,22 +177,43 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
         stopHost();
         stopTimings();
         stopCover();
+        stopSwap();
+        swap.stop();
         cancelAnimationFrame(frame);
       };
     },
     children: [
       Backdrop({
         'data-part': 'backdrop',
-        $image: computed(() => (options.value.coverBlur ? (track.value?.coverUrl ?? '') : '')),
+        ref: swap.backdrop,
+        $image: computed(() =>
+          options.value.coverBlur && options.value.layout !== 'square'
+            ? (track.value?.coverUrl ?? '')
+            : '',
+        ),
       }),
       Cover({
         'data-part': 'cover',
         $hidden: hiddenWhenIdle('cover'),
         $horizontal: horizontal,
         $bleed: bleed,
-        children: [CoverImage({ alt: '', src: computed(() => track.value?.coverUrl ?? '') })],
+        $square: square,
+        children: [
+          CoverImage({
+            alt: '',
+            ref: swap.cover,
+            src: computed(() => track.value?.coverUrl ?? ''),
+          }),
+        ],
+      }),
+      Scrim({
+        'data-part': 'scrim',
+        $hidden: computed(
+          () => !square.value || idle.value || options.value.hide.includes('cover'),
+        ),
       }),
       Body({
+        $square: square,
         $bleed: bleed,
         $horizontal: horizontal,
         children: [
@@ -183,6 +221,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
             'data-part': 'label',
             $hidden: statusHidden,
             $idle: idle,
+            $square: square,
             children: [
               Dot({ 'data-part': 'dot', $state: state }),
               LabelText({ 'data-part': 'label-text', $hidden: labelTextHidden, content: label }),
@@ -191,6 +230,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
           }),
           Line({
             'data-part': 'title',
+            ref: swap.line,
             $hidden: hiddenWhenIdle('title'),
             $size: computed(() => (horizontal.value ? 20 : 24)),
             $strong: true,
@@ -198,6 +238,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
           }),
           Line({
             'data-part': 'artist',
+            ref: swap.line,
             $hidden: hiddenWhenIdle('artist'),
             $size: computed(() => (horizontal.value ? 14 : 15)),
             $tone: 'muted',
@@ -205,6 +246,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
           }),
           Line({
             'data-part': 'album',
+            ref: swap.line,
             $hidden: hiddenWhenIdle('album'),
             $size: 13,
             $tone: 'dim',
@@ -212,6 +254,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
           }),
           Wave({
             'data-part': 'equalizer',
+            ref: swap.line,
             $hidden: hiddenWhenIdle('equalizer'),
             children: Array.from({ length: equalizerBars }, () =>
               Bar({
@@ -225,6 +268,7 @@ export const buildCard = (host: HTMLElement, props: Props): Node => {
           }),
           Times({
             'data-part': 'progress',
+            ref: swap.line,
             $hidden: hiddenWhenIdle('progress'),
             children: [
               TimeText({ 'data-part': 'elapsed', content: elapsed }),

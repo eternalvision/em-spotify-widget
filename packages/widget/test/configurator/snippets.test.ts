@@ -52,6 +52,9 @@ describe('snippets', () => {
       'height="604"',
     );
     expect(iframeSnippet(origin, 'pill', {})).toContain('height="58"');
+    expect(iframeSnippet(origin, 'now-playing', { layout: 'square', width: '400' })).toContain(
+      'height="400"',
+    );
     expect(
       iframeSnippet(origin, 'now-playing', { 'cover-bleed': 'true', gap: '30', padding: '10' }),
     ).toContain('height="532"');
